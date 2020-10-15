@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	r "github.com/simsta6/junior-task-go/internal"
+	r "github.com/simsta6/junior-task/internal"
 )
 
 func main() {
