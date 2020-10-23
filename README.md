@@ -2,7 +2,7 @@
  
 ## To run program
 
- go run ./cmd/junior-task
+ 	go run ./cmd/junior-task
 
 ## To run tests
 
