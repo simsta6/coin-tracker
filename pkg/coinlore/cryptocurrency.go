@@ -1,12 +1,6 @@
 package coinlore
 
-import (
-	"context"
-	"fmt"
-	"net/http"
-)
-
-//RawCurrency structure
+//RawCurrency structure is for keeping data from api
 type RawCurrency struct {
 	CryptoID         string `json:"id"`
 	Symbol           string `json:"symbol"`
@@ -26,7 +20,7 @@ type RawCurrency struct {
 	MSupply          string `json:"msupply"`
 }
 
-//Currency struct is only for values that will be used in program
+//Currency struct is for parsed data from RawCurrency
 type Currency struct {
 	CryptoID         string
 	Symbol           string
@@ -44,23 +38,4 @@ type Currency struct {
 	PriceBtc         float64
 	TSupply          string
 	MSupply          string
-}
-
-//GetCurrency is
-func (c *Client) GetCurrency(ctx context.Context, cryptoID string) (currency RawCurrency, err error) {
-	var rawCurrency []RawCurrency
-	finalURL := fmt.Sprintf("%s/ticker/?id=%s", c.BaseURL, cryptoID)
-
-	req, err := http.NewRequest("GET", finalURL, nil)
-	if err != nil {
-		return RawCurrency{}, err
-	}
-
-	req = req.WithContext(ctx)
-
-	if err := c.sendRequest(req, &rawCurrency); err != nil {
-		return RawCurrency{}, err
-	}
-
-	return rawCurrency[0], err
 }

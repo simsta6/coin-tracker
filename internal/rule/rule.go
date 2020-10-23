@@ -15,7 +15,7 @@ type Rule struct {
 	Used     bool    `json:"-"`
 }
 
-//ReadRulesJSON is for reading rules from specific file
+//ReadRulesJSON is for reading rules from specified file
 func ReadRulesJSON(filePath string) (rules []Rule, err error) {
 	jsonFile, err := os.Open(filePath)
 
@@ -30,21 +30,21 @@ func ReadRulesJSON(filePath string) (rules []Rule, err error) {
 	return rules, err
 }
 
-//WriteJSON is
-func WriteJSON(data []Rule, filePath string) (err error) {
+//WriteJSON writes rules to JSON file after all calculations
+func WriteJSON(rules []Rule, filePath string) (err error) {
 	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 
-	if err = json.NewEncoder(file).Encode(data); err != nil {
+	if err = json.NewEncoder(file).Encode(rules); err != nil {
 		return err
 	}
 	return nil
 }
 
-//Compare compaeres prices
+//Compare compares rule price to specified price by its operator
 func (r *Rule) Compare(price float64) (err error) {
 	switch {
 	case r.Operator == "lt":
@@ -63,7 +63,7 @@ func (r *Rule) Compare(price float64) (err error) {
 	return err
 }
 
-//ToString is
+//ToString is formats rules string
 func (r *Rule) ToString() (answer string) {
 	if !r.Used {
 		return ""

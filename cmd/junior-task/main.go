@@ -13,9 +13,8 @@ import (
 )
 
 const (
-	rulesFilePath    = "C:\\Users\\simas\\Desktop\\junior-task/rules.json"
-	currencyFilePath = "C:\\Users\\simas\\Desktop\\junior-task/currency.json"
-	baseURL          = "https://api.coinlore.net/api"
+	rulesFilePath = "./rules.json"
+	baseURL       = "https://api.coinlore.net/api"
 )
 
 var (
@@ -62,6 +61,7 @@ func waitForInterupt() <-chan struct{} {
 	return doneCh
 }
 
+//Executes main program
 func execute(ctx context.Context, usedRules *[]rule.Rule) (err error) {
 	currencyMap := make(map[string]coinlore.Currency)
 	client := coinlore.NewClient(baseURL)
@@ -89,6 +89,7 @@ func execute(ctx context.Context, usedRules *[]rule.Rule) (err error) {
 	return err
 }
 
+//Every calculation for rule
 func operateRule(ctx context.Context, r *rule.Rule, data *map[string]coinlore.Currency, client *coinlore.Client) {
 	for {
 		select {
@@ -111,12 +112,15 @@ func operateRule(ctx context.Context, r *rule.Rule, data *map[string]coinlore.Cu
 				fmt.Println(err)
 			}
 
-			fmt.Println(r.ToString())
+			if r.Used {
+				fmt.Println(r.ToString())
+			}
 			return
 		}
 	}
 }
 
+//Check if rules were used
 func rulesWereUsed(rules []rule.Rule) bool {
 	for _, v := range rules {
 		if v.Used {
@@ -126,6 +130,7 @@ func rulesWereUsed(rules []rule.Rule) bool {
 	return false
 }
 
+//Sends a call to server, gets data about crypto currency and puts it in a map by cryptoID
 func getCryptoDataMap(data *map[string]coinlore.Currency, cryptoID string, client *coinlore.Client) (err error) {
 	rootCtx := context.Background()
 	childCtx, cancelReq := context.WithTimeout(rootCtx, time.Second*3)

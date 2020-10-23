@@ -33,6 +33,25 @@ func NewClient(baseURL string) *Client {
 	}
 }
 
+//GetCurrency is
+func (c *Client) GetCurrency(ctx context.Context, cryptoID string) (currency RawCurrency, err error) {
+	var rawCurrency []RawCurrency
+	finalURL := fmt.Sprintf("%s/ticker/?id=%s", c.BaseURL, cryptoID)
+
+	req, err := http.NewRequest("GET", finalURL, nil)
+	if err != nil {
+		return RawCurrency{}, err
+	}
+
+	req = req.WithContext(ctx)
+
+	if err := c.sendRequest(req, &rawCurrency); err != nil {
+		return RawCurrency{}, err
+	}
+
+	return rawCurrency[0], err
+}
+
 func (c *Client) sendRequest(req *http.Request, v interface{}) (err error) {
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	req.Header.Set("Accept", "application/json; charset=utf-8")

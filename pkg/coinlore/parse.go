@@ -4,7 +4,7 @@ import (
 	"strconv"
 )
 
-//ParseCrypter is interface for ParseCrypter
+//ParseCrypter is interface for ParseCrypto
 type ParseCrypter interface {
 	ParseCrypto() (parsedData Currency, err error)
 }
