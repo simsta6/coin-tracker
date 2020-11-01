@@ -3,7 +3,7 @@ package main
 import (
 	"testing"
 
-	"github.com/simsta6/junior-task/internal/rule"
+	"github.com/simsta6/coin-tracker/internal/rule"
 )
 
 func TestFilter(t *testing.T) {

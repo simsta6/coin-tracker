@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/simsta6/junior-task/internal/rule"
+	"github.com/simsta6/coin-tracker/internal/rule"
 )
 
 func filter(rules []rule.Rule, usedRules []rule.Rule) ([]rule.Rule, []rule.Rule) {

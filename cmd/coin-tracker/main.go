@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/simsta6/junior-task/internal/rule"
-	"github.com/simsta6/junior-task/pkg/coinlore"
+	"github.com/simsta6/coin-tracker/internal/rule"
+	"github.com/simsta6/coin-tracker/pkg/coinlore"
 )
 
 const (
@@ -24,22 +24,22 @@ var (
 
 func main() {
 	var usedRules []rule.Rule
-	var continueProgram = true
 
 	doneCh := waitForInterupt()
 
 	ctx := context.Background()
 	cancelCtx, cancelFunc := context.WithCancel(ctx)
 	ticker := time.NewTicker(30 * time.Second)
+	defer ticker.Stop()
 
-	for continueProgram {
+continueProgram:
+	for {
 		select {
 		case <-doneCh:
 			cancelFunc()
-			continueProgram = false
-			continue
+			break continueProgram
 		case <-ticker.C:
-			execute(cancelCtx, &usedRules)
+			execute(cancelCtx, usedRules)
 		}
 	}
 
@@ -62,7 +62,7 @@ func waitForInterupt() <-chan struct{} {
 }
 
 //Executes main program
-func execute(ctx context.Context, usedRules *[]rule.Rule) (err error) {
+func execute(ctx context.Context, usedRules []rule.Rule) (err error) {
 	currencyMap := make(map[string]coinlore.Currency)
 	client := coinlore.NewClient(baseURL)
 
@@ -80,7 +80,7 @@ func execute(ctx context.Context, usedRules *[]rule.Rule) (err error) {
 
 	//If no rule was used in this iteration it's no need to rewrite json file
 	if rulesWereUsed(rules) {
-		rules, *usedRules = filter(rules, *usedRules)
+		rules, usedRules = filter(rules, usedRules)
 		err = rule.WriteJSON(rules, rulesFilePath)
 		if err != nil {
 			return err
@@ -91,22 +91,19 @@ func execute(ctx context.Context, usedRules *[]rule.Rule) (err error) {
 
 //Every calculation for rule
 func operateRule(ctx context.Context, r *rule.Rule, data *map[string]coinlore.Currency, client *coinlore.Client) {
+	defer wg.Done()
 	for {
 		select {
 		case <-ctx.Done():
 			fmt.Println(ctx.Err())
 			return
 		default:
-			defer wg.Done()
-
 			if err := getCryptoDataMap(data, r.CryptoID, client); err != nil {
 				fmt.Println(err)
 				return
 			}
 
-			mutex.Lock()
 			currencyData := (*data)[r.CryptoID]
-			mutex.Unlock()
 
 			if err := r.Compare(currencyData.PriceUSD); err != nil {
 				fmt.Println(err)
