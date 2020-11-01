@@ -1,4 +1,4 @@
-# junior-task
+# coin-tracker
  
 ## To run program
 
