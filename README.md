@@ -1,7 +1,7 @@
 # Coin-tracker
 
-Coin-tracker is for tracking CryptoCurrency prices from coinlore.com
-All rules which CryptoCurrency to track is located in [main folder](.)
+Coin-tracker is for tracking CryptoCurrency prices from coinlore.com\
+All rules which CryptoCurrency to track is located in main folder [rules.json](rules.json)
  
 ## To run program
 
